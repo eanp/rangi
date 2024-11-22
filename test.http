@@ -1,0 +1,45 @@
+@url = http://localhost
+@port = 3000
+@token = ee4c4e15-641b-43a6-9a43-29d69cd4c90f
+###
+--- User ---
+###
+POST {{url}}:{{port}}/api/users
+Content-Type: application/json
+
+{
+  "email" : "dev@gmail.com",
+  "password" : "dev",
+  "name" : "dev"
+}
+###
+POST {{url}}:{{port}}/api/users/login
+Content-Type: application/json
+
+{
+  "email" : "dev@gmail.com",
+  "password" : "wow"
+}
+###
+GET {{url}}:{{port}}/api/users/current
+Authorization: {{token}}
+Content-Type: application/json
+###
+PATCH  {{url}}:{{port}}/api/users/current
+Authorization: {{token}}
+Content-Type: application/json
+
+{
+  "email" : "dev@gmail.com",
+  "password" : "wow"
+}
+###
+DELETE {{url}}:{{port}}/api/users/current
+Authorization: {{token}}
+Content-Type: application/json
+###
+--- End of User ---
+###
+###
+--- Content ---
+###
