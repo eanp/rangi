@@ -3,7 +3,7 @@ import {LoginUserRequest, RegisterUserRequest, toUserResponse, UpdateUserRequest
 import {UserService} from "../service/user-service";
 import { ApplicationVariables } from "../model/app-model";
 import { User } from "@prisma/client";
-import { authMiddleware } from "../midlleware/auth-middleware";
+import { authMiddleware } from "../middleware/auth-middleware";
 
 export const userController = new Hono<{Variables:ApplicationVariables}>();
 

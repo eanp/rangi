@@ -11,27 +11,38 @@ datasource db {
 }
 
 model User {
-  id String @id()
-  name String
-  email String @unique
-  password String
-  token String?
+  id        String   @id()
+  name      String
+  email     String   @unique
+  password  String
+  token     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
+  session Session[]
   post Post[]
   @@map("users")
 }
 
-model Post {
+model Session {
   id String @id()
-  title String
-  content String
+  expiredAt DateTime?
+  user_id String
+
+  user User @relation(fields: [user_id], references: [id])
+  @@map("sessions")
+}
+
+model Post {
+  id        String   @id()
+  title     String
+  content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 
   user_id String
 
   user User @relation(fields: [user_id], references: [id])
+
   @@map("posts")
 }

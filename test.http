@@ -1,6 +1,6 @@
 @url = http://localhost
 @port = 3000
-@token = ee4c4e15-641b-43a6-9a43-29d69cd4c90f
+@token = 842146a3-00fc-485d-a289-4b639b9c56b5
 ###
 --- User ---
 ###
@@ -42,4 +42,44 @@ Content-Type: application/json
 ###
 ###
 --- Content ---
+###
+POST {{url}}:{{port}}/api/post
+Authorization: {{token}}
+Content-Type: application/json
+
+{
+  "title" : "title test",
+  "content" : "content test"
+}
+###
+GET {{url}}:{{port}}/api/posts
+Authorization: {{token}}
+Content-Type: application/json
+###
+GET {{url}}:{{port}}/api/posts?title=put
+Authorization: {{token}}
+Content-Type: application/json
+###
+GET {{url}}:{{port}}/api/posts?size=1&page=2&wow
+Authorization: {{token}}
+Content-Type: application/json
+###
+PUT  {{url}}:{{port}}/api/post/a996ac32-0d4e-401e-90e5-a09b00d88c7f
+Authorization: {{token}}
+Content-Type: application/json
+
+{
+  "title" : "title test put",
+  "content" : "content test"
+}
+###
+GET  {{url}}:{{port}}/api/post/a996ac32-0d4e-401e-90e5-a09b00d88c7f
+Authorization: {{token}}
+Content-Type: application/json
+###
+DELETE  {{url}}:{{port}}/api/post/1380d822-4772-4d41-92d1-e78de8a03d49
+Authorization: {{token}}
+Content-Type: application/json
+###
+--- End of Content ---
 ###

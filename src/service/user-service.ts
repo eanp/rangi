@@ -8,7 +8,7 @@ import {
 import { UserValidation } from "../validation/user-validation";
 import { prismaClient } from "../application/database";
 import { HTTPException } from "hono/http-exception";
-import { User } from "@prisma/client";
+import { Session, User } from "@prisma/client";
 
 export class UserService {
 
@@ -137,4 +137,69 @@ export class UserService {
 
     return true;
   }
+
+  // session
+  static async getSession(session_token: string | undefined | null): Promise<Session | false> {
+    const result = UserValidation.TOKEN.safeParse(session_token)
+
+    if (result.error || !session_token) {
+      return false
+    }
+
+    const session = await prismaClient.session.findFirst({
+      where: {
+        id: session_token
+      }
+    })
+
+    if (!session) {
+      return false
+    }
+
+    console.log("session")
+    console.log(session)
+
+    return session;
+  }
+
+  static async getUserBySession(id: string): Promise<User> {
+    const result = UserValidation.TOKEN.safeParse(id)
+
+    if (result.error) {
+      throw new HTTPException(401, {
+        message: "Unauthorized"
+      })
+    }
+
+    const user = await prismaClient.user.findFirst({
+      where: {
+        id
+      }
+    })
+
+    if (!user) {
+      throw new HTTPException(401, {
+        message: "Unauthorized"
+      })
+    }
+
+    return user;
+  }
+
+  static async deleteSession(session_token: string | undefined | null): Promise<boolean> {
+    const result = UserValidation.TOKEN.safeParse(session_token)
+
+    if (result.error || !session_token) {
+      return false
+    }
+
+    await prismaClient.session.delete({
+      where: {
+        id: session_token
+      }
+    })
+
+    return true
+  }
+
 }
