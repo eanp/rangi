@@ -1,6 +1,6 @@
 @url = http://localhost
 @port = 3000
-@token = 842146a3-00fc-485d-a289-4b639b9c56b5
+@token = 8eb9371a-0653-4a03-b126-851951b404a5
 ###
 --- User ---
 ###
@@ -18,7 +18,7 @@ Content-Type: application/json
 
 {
   "email" : "dev@gmail.com",
-  "password" : "wow"
+  "password" : "dev"
 }
 ###
 GET {{url}}:{{port}}/api/users/current
