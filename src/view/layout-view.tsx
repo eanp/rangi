@@ -1,12 +1,11 @@
-import {  FC } from "hono/jsx";
 import { html } from "hono/html";
 import { jsxRenderer } from "hono/jsx-renderer";
 import { ValdationAlert } from "./component-view";
-
 const app_name = Bun.env.APP_NAME;
 
-export const renderer = jsxRenderer(({children}) => {
+export const renderer = jsxRenderer(({ children }) => {
   return html`
+    <!DOCTYPE html>
     <html lang="en">
       <head>
         <meta charset="UTF-8" />
@@ -15,30 +14,99 @@ export const renderer = jsxRenderer(({children}) => {
         <script src="/public/htmx.org@2.0.0.js"></script>
         <script src="/public/alpinejs@3.14.1.js" defer></script>
         <script src="/public/focus@3.x.x.js" defer></script>
-        <link href="/public/styles.css" rel="stylesheet" />
+        <link href="/public/styles.css" rel="stylesheet">
+        <style>
+          /* sidebar */
+          @media (max-width: 1023px) {
+            .sidebar {
+              transform: translateX(-100%);
+              transition: transform 0.3s ease-in-out;
+            }
+
+            .sidebar.open {
+              transform: translateX(0);
+            }
+          }
+
+          /* htmx indicator */
+          .htmx-indicator {
+            opacity: 0;
+            transition: opacity 500ms ease-in;
+          }
+
+          .htmx-request .htmx-indicator {
+            opacity: 1;
+          }
+
+          .htmx-request.htmx-indicator {
+            opacity: 1;
+          }
+
+          .smooth {
+            transition: all 0.3s ease-in;
+          }
+        </style>
       </head>
+
       <body class="bg-gray-100 smooth">
         ${children}
+
+        <script>
+          // sidebar
+          document.addEventListener("DOMContentLoaded", (event) => {
+            const menuButton = document.getElementById("menuButton");
+            const sidebar = document.getElementById("sidebar");
+            const sectionButtons = document.querySelectorAll("nav button");
+
+            menuButton.addEventListener("click", () => {
+              sidebar.classList.toggle("open");
+            });
+
+            sectionButtons.forEach((button) => {
+              button.addEventListener("click", () => {
+                const ul = button.nextElementSibling;
+                ul.classList.toggle("hidden");
+                const svg = button.querySelector("svg");
+                svg.classList.toggle("rotate-90");
+              });
+            });
+          });
+        </script>
       </body>
     </html>
   `;
 });
 
+export const LoginFor = () => (
+  <form
+    hx-post="/todo"
+    hx-target="#todo"
+    hx-swap="beforebegin"
+    _="on htmx:afterRequest reset() me"
+    class="mb-4"
+  >
+    <div class="mb-2">
+      <input
+        name="title"
+        type="text"
+        class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg p-2.5"
+      />
+    </div>
+    <button
+      class="text-white bg-blue-700 hover:bg-blue-800 rounded-lg px-5 py-2 text-center"
+      type="submit"
+    >
+      Submit
+    </button>
+  </form>
+);
 
-export const UserPage: FC<{name:string;email:string;id:string;createdAt:Date}> = ({name,email,id,createdAt}) => (
-  <div class="flex h-screen flex-col bg-red-500">
-  <h1 class="bg-blue-300">{app_name} User Page</h1>
-  <p>{name ?? "-"}</p>
-  <p>{email ?? "-"}</p>
-  <p>{id ?? "-"}</p>
-  <p>{createdAt.toString() ?? "-"}</p>
-</div>
-)
-
-export const LoginForm: FC<{ email: string;
-  message: string[] | boolean;}> = ({
+export const LoginForm = ({
   email,
   message,
+}: {
+  email: string;
+  message: string[] | boolean;
 }) => (
   <>
     <form
@@ -99,10 +167,12 @@ export const LoginForm: FC<{ email: string;
   </>
 );
 
-export const RegisterForm:FC<{ email: string;
-  message: string[] | boolean;}> = ({
+export const RegisterForm = ({
   email,
   message,
+}: {
+  email: string;
+  message: string[] | boolean;
 }) => (
   <>
     <form

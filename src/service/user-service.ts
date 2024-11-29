@@ -193,7 +193,7 @@ export class UserService {
       return false
     }
 
-    await prismaClient.session.deleteMany({
+    await prismaClient.session.delete({
       where: {
         id: session_token
       }

@@ -7,12 +7,10 @@ import {requestId} from "hono/request-id";
 import { postController } from './controller/post-controller.js';
 import { userWebController } from './controller/user-web-controller.js';
 import { webAuthMiddleware } from './middleware/auth-middleware.js';
-import { logger } from 'hono/logger'
 
 const app = new Hono()
-
-app.use(logger())
 app.use("/public/*", serveStatic({root: "./"}))
+
 
 app.get('/',webAuthMiddleware, (c) => {
   return c.text('Hello Hono!')

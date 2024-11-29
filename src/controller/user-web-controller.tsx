@@ -2,10 +2,12 @@ import { Hono } from "hono";
 import {
   LoginUserRequest,
   RegisterUserRequest,
+  toUserResponse,
+  UpdateUserRequest,
 } from "../model/user-model";
 import { UserService } from "../service/user-service";
 import { ApplicationVariables } from "../model/app-model";
-import { renderer, LoginForm, RegisterForm, UserPage } from "../view/layout-view";
+import { renderer, LoginForm, RegisterForm } from "../view/layout-view";
 import { UserValidation } from "../validation/user-validation";
 import { prismaClient } from "../application/database";
 import { ZodError } from "zod";
@@ -13,28 +15,36 @@ import {
   ErrorMessageValidation,
   formatValidationErrors,
 } from "../validation/error-message-validation";
-import { deleteCookie, getSignedCookie, setSignedCookie } from "hono/cookie";
-import { User } from "@prisma/client";
+import {
+  deleteCookie,
+  getCookie,
+  setCookie,
+  setSignedCookie,
+} from "hono/cookie";
+import { Session, User } from "@prisma/client";
 import { webAuthMiddleware } from "../middleware/auth-middleware";
-
-
 export const userWebController = new Hono<{
   Variables: ApplicationVariables;
 }>();
 
-const secret_session_key = Bun.env.SECRET_SESSION_KEY ?? "";
-
-userWebController.use("*", renderer);
+userWebController.get("*", renderer);
+const app_name = Bun.env.APP_NAME;
 
 userWebController.get("/login", async (c) => {
   return c.render(
+    <div class="flex h-screen flex-col bg-red-500">
+      <h1 class="bg-blue-300">{app_name} Login</h1>
       <LoginForm email="" message={false} />
+    </div>
   );
 });
 
 userWebController.get("/register", async (c) => {
   return c.render(
+    <div class="flex h-screen flex-col bg-red-500">
+      <h1 class="bg-blue-300">{app_name} Register</h1>
       <RegisterForm email="" message={false} />
+    </div>
   );
 });
 
@@ -88,12 +98,12 @@ userWebController.post("/login", async (c) => {
       <LoginForm email={request.email} message={["cannot login session"]} />
     );
   }
-  console.log("secret_session_key");
-  console.log(secret_session_key);
-  await setSignedCookie(c, "x-hono-session", id, secret_session_key, {
+
+  setCookie(c, "x-hono-session", id, {
     path: "/",
     secure: true,
     httpOnly: true,
+    maxAge: 1000,
     expires: new Date(Date.now() + 6.048e8 * 1),
     sameSite: "Strict",
   });
@@ -150,10 +160,11 @@ userWebController.post("/register", async (c) => {
     );
   }
 
-  await setSignedCookie(c, "x-hono-session", id, secret_session_key, {
+  setCookie(c, "x-hono-session", id, {
     path: "/",
     secure: true,
     httpOnly: true,
+    maxAge: 1000,
     expires: new Date(Date.now() + 6.048e8 * 1),
     sameSite: "Strict",
   });
@@ -164,28 +175,26 @@ userWebController.post("/register", async (c) => {
 });
 
 userWebController.get("/logout", async (c) => {
-  const sessionId = await getSignedCookie(
-    c,
-    secret_session_key,
-    "x-hono-session"
-  );
-
-  if (!sessionId) {
-    return c.redirect("/login");
-  }
-
-  deleteCookie(c, "x-hono-session");
-  const result = await UserService.deleteSession(sessionId);
-
-  console.info("logout session : ", sessionId, ":", false);
+  const sessionId = getCookie(c, "x-hono-session");
+  deleteCookie(c, "x-hono-session", {
+    path: "/",
+    secure: true,
+  });
+  await UserService.deleteSession(sessionId);
 
   return c.redirect("/login");
 });
 
 userWebController.get("/user", webAuthMiddleware, async (c) => {
-  const user = c.get("user") as User;
+  const user = c.get('user') as User;
   return c.render(
-    <UserPage name={user.name} email={user.email} id={user.id} createdAt={user.createdAt} />
+    <div class="flex h-screen flex-col bg-red-500">
+      <h1 class="bg-blue-300">{app_name} User Page</h1>
+      <p>{user.name ?? "-"}</p>
+      <p>{user.email ?? "-"}</p>
+      <p>{user.id ?? "-"}</p>
+      <p>{user.createdAt.toString() ?? "-"}</p>
+    </div>
   );
 });
 

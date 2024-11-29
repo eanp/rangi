@@ -1,33 +1,23 @@
 {
   "name": "rangi",
   "scripts": {
-    "dev": "bun run dev:css & bun run dev:server",
-    "dev:server": "bun run --hot src/index.ts",
-    "dev:css": "bunx tailwindcss -i src/styles.css -o public/styles.css --watch",
-    "build:css": "bunx tailwindcss -i src/styles.css -o public/styles.css --minify",
-    "build:vite": "vite build --mode client && vite build",
-    "start": "bun run build:css && bun run src/index.ts",
-    "migrate": "bunx prisma generate && bunx prisma migrate deploy",
-    "compile": " bun build src/index.ts --compile --outfile rangi"
+  "dev": "bun run dev:css & bun run dev:server",
+  "dev:server": "bun run --hot src/index.ts",
+  "dev:css": "bunx tailwindcss -i src/styles.css -o public/styles.css --watch",
+  "build:css": "bunx tailwindcss -i src/styles.css -o public/styles.css --minify",
+  "start": "bun run build:css && bun run src/index.ts"
   },
   "dependencies": {
-    "@hono/node-server": "^1.13.7",
     "@hono/react-renderer": "^0.2.1",
     "@hono/vite-dev-server": "^0.17.0",
     "@hono/zod-validator": "^0.4.1",
     "@prisma/client": "^5.22.0",
-    "@types/react": "^18.3.12",
-    "hono": "^4.6.12",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "hono": "^4.6.10",
     "winston": "^3.17.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@hono/vite-build": "^1.1.0",
     "@types/bun": "latest",
-    "@types/node": "^22.10.1",
-    "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.49",
