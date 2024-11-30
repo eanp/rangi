@@ -1,34 +1,50 @@
-import {MiddlewareHandler} from "hono";
+import {Request, Response, NextFunction} from "express";
+import {prismaClient} from "../application/database";
+import {UserRequest} from "../type/user-request";
 import {UserService} from "../service/user-service";
-import {
-  getSignedCookie,
-} from 'hono/cookie'
-const secret_session_key = Bun.env.SECRET_SESSION_KEY ?? "";
+import * as cookieParser from "cookie-parser";
 
-export const authMiddleware: MiddlewareHandler = async (c, next) => {
-    const token = c.req.header('Authorization')
-    c.res.headers.append('X-Status', 'Debug message')
-    const user = await UserService.get(token)
+const secret_session_key = process.env.SECRET_SESSION_KEY ?? "";
+export const authMiddleware = async (req: UserRequest, res: Response, next: NextFunction) => {
+    const token = req.get('Authorization')
 
-    c.set('user', user)
-    await next()
+    if (token) {
+        const user = await prismaClient.user.findFirst({
+            where: {
+                token: token
+            }
+        });
+
+        if (user) {
+            req.user = user;
+            next();
+            return;
+        }
+    }
+
+    res.status(401).json({
+        errors: "Unauthorized"
+    }).end();
 }
 
-export const webAuthMiddleware: MiddlewareHandler = async (c, next) => {
-  const sessionId = await getSignedCookie(c, secret_session_key, "x-hono-session");
+export const webAuthMiddleware = async (req: UserRequest, res: Response, next: NextFunction) => {
+  // cookieParser
+  // res.cookie('name', 'GeeksForGeeks', { signed: true }).send();
+  const sessionId = await req.signedCookies("x-hono-session");
+  console.log(req.signedCookies)
 
   if (!sessionId) {
-    return c.redirect("/login");
+    return res.redirect("/login");
   }
 
   const session = await UserService.getSession(sessionId)
 
   if (!session) {
-    return c.redirect("/login");
+    return res.redirect("/login");
   }
 
   const user = await UserService.getUserBySession(session.user_id)
+  req.user = user;
 
-  c.set('user', user)
   await next();
 }

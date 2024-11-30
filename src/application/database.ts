@@ -35,5 +35,5 @@ prismaClient.$on('info', (e) => {
 })
 
 prismaClient.$on('warn', (e) => {
-    logger.warn(e)
+    logger.info(e)
 })

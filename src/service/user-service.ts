@@ -7,8 +7,11 @@ import {
 } from "../model/user-model";
 import { UserValidation } from "../validation/user-validation";
 import { prismaClient } from "../application/database";
-import { HTTPException } from "hono/http-exception";
 import { Session, User } from "@prisma/client";
+import { v4 as uuid } from "uuid";
+import { Validation } from "../validation/validation";
+import { ResponseError } from "../error/response-error";
+import argon2 from "argon2";
 
 export class UserService {
 
@@ -19,54 +22,49 @@ export class UserService {
       where: {
         email: request.email
       }
-    })
+    });
 
     if (totalUserWithSameEmail != 0) {
-      throw new HTTPException(400, {
-        message: "Email already exists"
-      })
+      throw new ResponseError(400, "Email already exists");
     }
-
-    request.password = await Bun.password.hash(request.password, {
-      algorithm: "argon2d"
-    })
+    console.log(request.password )
+    request.password = await argon2.hash(request.password);
+    console.log(request.password )
 
     const user = await prismaClient.user.create({
-      data: { ...request, id: crypto.randomUUID() }
+      data: { ...request, id: uuid() }
     })
 
-    return toUserResponse(user)
+    const response = toUserResponse(user);
+    response.token = user.token!;
+    return response;
   }
 
 
   static async login(request: LoginUserRequest): Promise<UserResponse> {
-    request = UserValidation.LOGIN.parse(request)
+    const registerRequest = Validation.validate(UserValidation.LOGIN, request);
 
     let user = await prismaClient.user.findUnique({
       where: {
-        email: request.email
+        email: registerRequest.email
       }
     })
 
     if (!user) {
-      throw new HTTPException(401, {
-        message: "email or password is wrong"
-      })
+      throw new ResponseError(401, "email or password is wrong");
     }
 
-    const isPasswordValid = await Bun.password.verify(request.password, user.password, 'argon2d')
+    const isPasswordValid = await argon2.verify(user.password,registerRequest.password)
     if (!isPasswordValid) {
-      throw new HTTPException(401, {
-        message: "email or password is wrong"
-      })
+      throw new ResponseError(401, "email or password is wrong");
     }
 
     user = await prismaClient.user.update({
       where: {
-        email: request.email
+        email: registerRequest.email
       },
       data: {
-        token: crypto.randomUUID(),
+        token: uuid(),
         updatedAt: new Date()
       }
     })
@@ -80,9 +78,8 @@ export class UserService {
     const result = UserValidation.TOKEN.safeParse(token)
 
     if (result.error) {
-      throw new HTTPException(401, {
-        message: "Unauthorized"
-      })
+      throw new ResponseError(401, "Unauthorized");
+
     }
 
     token = result.data;
@@ -94,25 +91,21 @@ export class UserService {
     })
 
     if (!user) {
-      throw new HTTPException(401, {
-        message: "Unauthorized"
-      })
+      throw new ResponseError(401, "Unauthorized");
     }
 
     return user;
   }
 
   static async update(user: User, request: UpdateUserRequest): Promise<UserResponse> {
-    request = UserValidation.UPDATE.parse(request)
+    const updateRequest = Validation.validate(UserValidation.UPDATE, request);
 
-    if (request.name) {
-      user.name = request.name
+    if (updateRequest.name) {
+      user.name = updateRequest.name
     }
 
-    if (request.password) {
-      user.password = await Bun.password.hash(request.password, {
-        algorithm: "argon2d"
-      })
+    if (updateRequest.password) {
+      user.password = await argon2.hash(updateRequest.password);
     }
 
     user = await prismaClient.user.update({
@@ -166,9 +159,7 @@ export class UserService {
     const result = UserValidation.TOKEN.safeParse(id)
 
     if (result.error) {
-      throw new HTTPException(401, {
-        message: "Unauthorized"
-      })
+      throw new ResponseError(401, "Unauthorized");
     }
 
     const user = await prismaClient.user.findFirst({
@@ -178,9 +169,7 @@ export class UserService {
     })
 
     if (!user) {
-      throw new HTTPException(401, {
-        message: "Unauthorized"
-      })
+      throw new ResponseError(401, "Unauthorized");
     }
 
     return user;

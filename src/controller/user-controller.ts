@@ -1,59 +1,67 @@
-import {Hono} from "hono";
+import {Request, Response, NextFunction} from "express";
 import {LoginUserRequest, RegisterUserRequest, toUserResponse, UpdateUserRequest} from "../model/user-model";
 import {UserService} from "../service/user-service";
-import { ApplicationVariables } from "../model/app-model";
-import { User } from "@prisma/client";
-import { authMiddleware } from "../middleware/auth-middleware";
+import { UserRequest } from "../type/user-request";
 
-export const userController = new Hono<{Variables:ApplicationVariables}>();
+export class UserController {
+  static async register(req: Request, res: Response, next: NextFunction) {
+    try{
+      const request = await req.body as RegisterUserRequest;
+      const response = await UserService.register(request)
 
-userController.post('/api/users', async (c) => {
-  const request = await c.req.json() as RegisterUserRequest;
+      return res.status(201).json({
+        data: response
+      })
+    } catch(e){
+      next(e);
+    }
+  }
 
-  const response = await UserService.register(request)
+  static async login(req: Request, res: Response, next: NextFunction) {
+    try {
+        const request: LoginUserRequest = req.body as LoginUserRequest;
+        const response = await UserService.login(request);
+        res.status(200).json({
+            data: response
+        })
+    } catch (e) {
+        next(e);
+    }
+}
 
-  return c.json({
-      data: response
-  })
-})
 
-userController.post('/api/users/login', async (c) => {
-  const request = await c.req.json() as LoginUserRequest;
+static async get(req: UserRequest, res: Response, next: NextFunction) {
+  try {
+      const response = await UserService.get(req.user!);
+      res.status(200).json({
+          data: toUserResponse(response)
+      })
+  } catch (e) {
+      next(e);
+  }
+}
 
-  const response = await UserService.login(request)
+static async update(req: UserRequest, res: Response, next: NextFunction) {
+  try {
+      const request: UpdateUserRequest = req.body as UpdateUserRequest;
+      const response = await UserService.update(req.user!, request);
+      res.status(200).json({
+          data: response
+      })
+  } catch (e) {
+      next(e);
+  }
+}
 
-  return c.json({
-      data: response
-  })
-})
+static async logout(req: UserRequest, res: Response, next: NextFunction) {
+  try {
+      await UserService.logout(req.user!);
+      res.status(200).json({
+          data: "OK"
+      })
+  } catch (e) {
+      next(e);
+  }
+}
 
-userController.use(authMiddleware)
-
-userController.get('/api/users/current', async (c) => {
-    const user = c.get('user') as User
-
-    return c.json({
-        data: toUserResponse(user)
-    })
-})
-
-userController.patch('/api/users/current', async (c) => {
-  const user = c.get('user') as User
-  const request = await c.req.json() as UpdateUserRequest;
-
-  const response = await UserService.update(user, request)
-
-  return c.json({
-      data: response
-  })
-})
-
-userController.delete('/api/users/current', async (c) => {
-  const user = c.get('user') as User
-
-  const response = await UserService.logout(user)
-
-  return c.json({
-      data: response
-  })
-})
+}

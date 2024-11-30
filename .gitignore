@@ -4,3 +4,6 @@ node_modules/
 
 # apps
 rangi
+
+# build
+dist/

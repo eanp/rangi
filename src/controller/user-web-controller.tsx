@@ -12,7 +12,7 @@ import { ZodError } from "zod";
 import {
   ErrorMessageValidation,
   formatValidationErrors,
-} from "../validation/error-message-validation";
+} from "../error/validation-error";
 import { deleteCookie, getSignedCookie, setSignedCookie } from "hono/cookie";
 import { User } from "@prisma/client";
 import { webAuthMiddleware } from "../middleware/auth-middleware";
