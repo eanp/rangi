@@ -1,0 +1,31 @@
+<form class="bg-white w-full rounded-lg py-5" hx-post="/login" hx-swap="outerHTML" id="login-form">
+  <div class="mx-auto w-3/4">
+    <div class="flex flex-col items-start justify-start w-full h-full p-6  border-gray-500">
+      <div class="relative w-full space-y-6">
+        <div class="w-full max-w-xs my-2">
+          <label class="text-sm text-gray-900" for="email">
+            Email
+          </label>
+          <input autocomplete="false" id="email" name="email" value=""
+            class="flex w-full h-10 mt-2 px-3 py-2 text-sm bg-white border rounded-md border-neutral-300 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50"
+            data-primary="blue-600" data-rounded="rounded-md" placeholder="Email" >
+        </div>
+        <div class="w-full max-w-xs my-2">
+          <label class="text-sm text-gray-900" for="password">
+            Password
+          </label>
+          <input autocomplete="false" type="password" id="password" name="password"
+            class="blex w-full h-10 mt-2 px-3 py-2 text-sm bg-white border rounded-md border-neutral-300 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50"
+            data-primary="blue-600" data-rounded="rounded-md" placeholder="Password" >
+        </div>
+        <div class="w-full max-w-xs my-2">
+          <button type="submit"
+            class="inline-flex items-center justify-center w-full h-10 px-4 py-2 text-sm font-medium text-white transition-colors rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none bg-neutral-950 hover:bg-neutral-950/90"
+            data-primary="blue-600" data-rounded="rounded-md">
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

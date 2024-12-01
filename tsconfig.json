@@ -3,8 +3,8 @@
     "src/**/*"
   ],
   "compilerOptions": {
-    "target": "es2016",
-    "module": "commonjs",
+    "module": "esnext",
+    "target": "esnext",
     "moduleResolution": "Node",
     "outDir": "./dist",
     "esModuleInterop": true,

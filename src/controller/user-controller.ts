@@ -4,9 +4,9 @@ import {UserService} from "../service/user-service";
 import { UserRequest } from "../type/user-request";
 
 export class UserController {
-  static async register(req: Request, res: Response, next: NextFunction) {
+  static async register(req: Request, res: Response, next: NextFunction):Promise<Response|any> {
     try{
-      const request = await req.body as RegisterUserRequest;
+      const request: RegisterUserRequest = await req.body as RegisterUserRequest;
       const response = await UserService.register(request)
 
       return res.status(201).json({
@@ -34,7 +34,7 @@ static async get(req: UserRequest, res: Response, next: NextFunction) {
   try {
       const response = await UserService.get(req.user!);
       res.status(200).json({
-          data: toUserResponse(response)
+          data: response
       })
   } catch (e) {
       next(e);

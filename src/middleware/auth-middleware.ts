@@ -9,12 +9,11 @@ export const authMiddleware = async (req: UserRequest, res: Response, next: Next
     const token = req.get('Authorization')
 
     if (token) {
-        const user = await prismaClient.user.findFirst({
-            where: {
-                token: token
-            }
-        });
-
+      const user = await prismaClient.user.findFirst({
+        where: {
+          token: token
+        }
+      });
         if (user) {
             req.user = user;
             next();
@@ -27,24 +26,24 @@ export const authMiddleware = async (req: UserRequest, res: Response, next: Next
     }).end();
 }
 
-export const webAuthMiddleware = async (req: UserRequest, res: Response, next: NextFunction) => {
-  // cookieParser
-  // res.cookie('name', 'GeeksForGeeks', { signed: true }).send();
-  const sessionId = await req.signedCookies("x-hono-session");
-  console.log(req.signedCookies)
+// export const webAuthMiddleware = async (req: UserRequest, res: Response, next: NextFunction) => {
+//   // cookieParser
+//   // res.cookie('name', 'GeeksForGeeks', { signed: true }).send();
+//   const sessionId = await req.signedCookies("x-hono-session");
+//   console.log(req.signedCookies)
 
-  if (!sessionId) {
-    return res.redirect("/login");
-  }
+//   if (!sessionId) {
+//     return res.redirect("/login");
+//   }
 
-  const session = await UserService.getSession(sessionId)
+//   const session = await UserService.getSession(sessionId)
 
-  if (!session) {
-    return res.redirect("/login");
-  }
+//   if (!session) {
+//     return res.redirect("/login");
+//   }
 
-  const user = await UserService.getUserBySession(session.user_id)
-  req.user = user;
+//   const user = await UserService.getUserBySession(session.user_id)
+//   req.user = user;
 
-  await next();
-}
+//   await next();
+// }

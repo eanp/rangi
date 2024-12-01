@@ -27,9 +27,7 @@ export class UserService {
     if (totalUserWithSameEmail != 0) {
       throw new ResponseError(400, "Email already exists");
     }
-    console.log(request.password )
     request.password = await argon2.hash(request.password);
-    console.log(request.password )
 
     const user = await prismaClient.user.create({
       data: { ...request, id: uuid() }
@@ -42,11 +40,11 @@ export class UserService {
 
 
   static async login(request: LoginUserRequest): Promise<UserResponse> {
-    const registerRequest = Validation.validate(UserValidation.LOGIN, request);
+    request = UserValidation.LOGIN.parse(request)
 
     let user = await prismaClient.user.findUnique({
       where: {
-        email: registerRequest.email
+        email: request.email
       }
     })
 
@@ -54,14 +52,14 @@ export class UserService {
       throw new ResponseError(401, "email or password is wrong");
     }
 
-    const isPasswordValid = await argon2.verify(user.password,registerRequest.password)
+    const isPasswordValid = await argon2.verify(user.password,request.password)
     if (!isPasswordValid) {
       throw new ResponseError(401, "email or password is wrong");
     }
 
     user = await prismaClient.user.update({
       where: {
-        email: registerRequest.email
+        email: request.email
       },
       data: {
         token: uuid(),
@@ -74,38 +72,19 @@ export class UserService {
     return response
   }
 
-  static async get(token: string | undefined | null): Promise<User> {
-    const result = UserValidation.TOKEN.safeParse(token)
-
-    if (result.error) {
-      throw new ResponseError(401, "Unauthorized");
-
-    }
-
-    token = result.data;
-
-    const user = await prismaClient.user.findFirst({
-      where: {
-        token: token
-      }
-    })
-
-    if (!user) {
-      throw new ResponseError(401, "Unauthorized");
-    }
-
-    return user;
+  static async get(user:User): Promise<UserResponse> {
+    return toUserResponse(user);
   }
 
   static async update(user: User, request: UpdateUserRequest): Promise<UserResponse> {
-    const updateRequest = Validation.validate(UserValidation.UPDATE, request);
+    request = UserValidation.UPDATE.parse(request)
 
-    if (updateRequest.name) {
-      user.name = updateRequest.name
+    if (request.name) {
+      user.name = request.name
     }
 
-    if (updateRequest.password) {
-      user.password = await argon2.hash(updateRequest.password);
+    if (request.password) {
+      user.password = await argon2.hash(request.password);
     }
 
     user = await prismaClient.user.update({

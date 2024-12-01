@@ -7,3 +7,5 @@ rangi
 
 # build
 dist/
+
+.DS_Store
