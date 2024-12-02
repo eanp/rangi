@@ -4,3 +4,8 @@ import {User} from "@prisma/client";
 export interface UserRequest extends Request {
     user?: User
 }
+
+export interface WebRequest extends Request {
+    session?: string | null;
+    user?: User | null;
+}

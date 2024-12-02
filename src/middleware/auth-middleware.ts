@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction} from "express";
 import {prismaClient} from "../application/database";
-import {UserRequest} from "../type/user-request";
+import {UserRequest, WebRequest} from "../type/user-request";
 import {UserService} from "../service/user-service";
 import * as cookieParser from "cookie-parser";
 
@@ -26,24 +26,24 @@ export const authMiddleware = async (req: UserRequest, res: Response, next: Next
     }).end();
 }
 
-// export const webAuthMiddleware = async (req: UserRequest, res: Response, next: NextFunction) => {
-//   // cookieParser
-//   // res.cookie('name', 'GeeksForGeeks', { signed: true }).send();
-//   const sessionId = await req.signedCookies("x-hono-session");
-//   console.log(req.signedCookies)
+export const webAuthMiddleware = async (req: WebRequest, res: Response, next: NextFunction) => {
+  const sessionId = req.signedCookies["x-session"];
+  req.session = sessionId
 
-//   if (!sessionId) {
-//     return res.redirect("/login");
-//   }
+  if (!sessionId) {
+    return res.redirect("/login");
+  }
 
-//   const session = await UserService.getSession(sessionId)
+  const session = await UserService.getSession(sessionId)
 
-//   if (!session) {
-//     return res.redirect("/login");
-//   }
+  if (!session) {
+    return res.redirect("/login");
+  }
 
-//   const user = await UserService.getUserBySession(session.user_id)
-//   req.user = user;
+  const user = await UserService.getUserBySession(session.user_id)
+  req.user = user;
+  console.log("user auth middleware")
+  console.log(user)
 
-//   await next();
-// }
+  next();
+}

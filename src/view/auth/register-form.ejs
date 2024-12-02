@@ -1,21 +1,23 @@
-<div id="login-form" class="relative w-full max-w-sm mx-auto lg:mb-0">
+<div id="register-form" class="relative w-full max-w-sm mx-auto lg:mb-0">
   <h1 class="text-6xl font-semibold tracking-tight text-center my-12">
     <%= title %>
   </h1>
   <div class="relative text-center">
 
     <div class="flex flex-col mb-6 space-y-2">
-      <h1 class="text-2xl font-semibold tracking-tight">Sign In an Account</h1>
-      <p class="text-sm text-neutral-500">Login to sign in your account</p>
+      <h1 class="text-2xl font-semibold tracking-tight">Create an account</h1>
+      <p class="text-sm text-neutral-500">Enter your email below to create your account</p>
     </div>
-    <form class="space-y-2" hx-post="/login" hx-swap="outerHTML" hx-target="#login-form">
+    <form class="space-y-2" hx-post="/register" hx-swap="outerHTML" hx-target="#register-form">
       <input autocomplete="email" type="text" name="email" value="<%= formResponse?.email || ""%>" placeholder="name@yourmail.com"
+        class="flex w-full h-10 px-3 py-2 text-sm bg-white border rounded-md border-neutral-300 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50">
+      <input autocomplete="name" type="text" name="name" value="<%= formResponse?.name || ""%>"placeholder="username"
         class="flex w-full h-10 px-3 py-2 text-sm bg-white border rounded-md border-neutral-300 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50">
       <input type="password" name="password" value="" placeholder="password"
         class="flex w-full h-10 px-3 py-2 text-sm bg-white border rounded-md border-neutral-300 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50">
       <button type="submit"
         class="inline-flex items-center justify-center w-full h-10 px-4 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-200 rounded-md bg-neutral-950 hover:bg-neutral-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none">
-        Sign In
+        Sign up
       </button>
       <% if (status==="error" ) { %>
         <div
@@ -36,7 +38,8 @@
       </div>
     </form>
   </div>
-  <p class="mt-6 text-sm text-center text-neutral-500">Not have an account?
-    <button type="button" hx-get="/register" hx-push-url="/register" hx-target="#login-form" hx-select="#register-form"
-      class="relative font-medium text-blue-600 group" data-primary="blue-600"><span>Register here</span></button />
+  <p class="mt-6 text-sm text-center text-neutral-500">Already have an account?
+    <button type="button" hx-get="/login" hx-push-url="/login" hx-target="#register-form" hx-select="#login-form"
+      class="relative font-medium text-blue-600 group" data-primary="blue-600"><span>Login here</span></button />
+
 </div>
