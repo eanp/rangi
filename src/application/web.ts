@@ -13,9 +13,7 @@ web.set('views', path.join(__dirname, './../view'));
 web.set("view engine", "ejs");
 web.use(expressLayouts);
 web.set("layout", "layout-main-view");
-web.use("/public", express.static("public", {
-  maxAge: "86400"
-}));
+web.use("/public", express.static("public"));
 web.use(express.json());
 // route
 web.use(publicRouter);

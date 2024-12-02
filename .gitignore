@@ -7,5 +7,13 @@ rangi
 
 # build
 dist/
+*.bun
+/bun-webkit
+bun-binary
+bun-mimalloc
+bun-nomimalloc
+bun-singlehtreaded
+bun-test-scratch
+bun-zigld
 
 .DS_Store

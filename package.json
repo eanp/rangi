@@ -5,7 +5,6 @@
     "dev:server": "bun run --hot src/index.ts",
     "dev:css": "bunx tailwindcss -i src/styles.css -o public/styles.css --watch",
     "build:css": "bunx tailwindcss -i src/styles.css -o public/styles.css --minify",
-    "build:vite": "vite build --mode client && vite build",
     "start": "bun run build:css && bun run src/index.ts",
     "migrate": "bunx prisma generate && bunx prisma migrate deploy",
     "compile": " bun build src/index.ts --compile --outfile rangi",
