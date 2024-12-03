@@ -1,0 +1,68 @@
+<div id="sticky-header" class="fixed top-0 z-[60] flex items-center justify-center w-full h-16 duration-500 ease-out bg-white border-b bg-opacity-90 backdrop-blur-md border-neutral-400 border-opacity-20">
+  <div class="flex items-center justify-between w-full px-4 mx-auto 2xl:px-0 max-w-7xl">
+
+    <!-- sidebar button -->
+    <div class="relative z-10 flex items-center w-auto leading-10 lg:flex-grow-0 lg:flex-shrink-0 lg:text-left">
+      <button @click="sidebarOpen=!sidebarOpen" class="flex items-center justify-center w-8 h-8 mr-3 border rounded-md lg:hidden border-neutral-200 text-neutral-800 hover:text-black hover:bg-neutral-100 active:bg-white">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g fill="none" stroke="none">
+            <path d="M2.74902 6.75C2.74902 5.09315 4.09217 3.75 5.74902 3.75H18.2507C19.9075 3.75 21.2507 5.09315 21.2507 6.75V17.25C21.2507 18.9069 19.9075 20.25 18.2507 20.25H5.74902C4.09217 20.25 2.74902 18.9069 2.74902 17.25V6.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M13.75 3.75V20.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M16.75 7.75L18.25 7.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M16.75 11L18.25 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M16.75 14.25L18.25 14.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          </g>
+        </svg>
+      </button>
+
+      <!-- app title -->
+      <a href="/" class="inline-flex sm:mr-8 items-end font-sans text-2xl font-extrabold text-left text-black no-underline bg-transparent cursor-pointer group focus:no-underline">
+        <span class="flex opacity-90 items-center h-full px-0.5 font-bold leading-none">
+          Rangi
+        </span>
+      </a>
+
+      <!-- navigation -->
+      <nav class="items-center hidden space-x-5 text-sm font-medium lg:flex">
+        <a class="relative transition-colors text-black group" href="/pines/docs/introduction">
+          <span>Documentation</span>
+          <span class="absolute bottom-0 w-0 h-0.5 bg-black left-1/2"></span>
+        </a>
+        <a class="relative transition-colors text-neutral-700 hover:text-black group" href="/pines/docs/accordion">
+          <span>Elements</span>
+          <span class="absolute bottom-0 w-0 h-0.5 bg-black left-1/2"></span>
+        </a>
+
+        <a class="relative hidden transition-colors text-neutral-700 hover:text-black group" href="/pines/examples">
+          <span>Examples</span>
+          <span class="absolute bottom-0 w-0 h-0.5 bg-black left-1/2"></span>
+        </a>
+        <a class="relative transition-colors text-neutral-700 hover:text-black group" target="_blank" href="https://github.com/thedevdojo/pines">
+          <span>Github</span>
+          <span class="absolute bottom-0 w-0 h-0.5 bg-black left-1/2"></span>
+        </a>
+      </nav>
+
+    </div>
+
+    <!-- profile -->
+    <div class="relative">
+      <div x-data="{
+  dropdownOpen: false
+}" class="relative">
+
+        <button :class="{ 'hover:bg-neutral-100' : !dropdownOpen, 'bg-neutral-100' : dropdownOpen }" @click="dropdownOpen=true" class="inline-flex items-center justify-center h-12 py-2 pl-3 pr-12 text-sm font-medium transition-colors bg-white border-0 rounded-md text-neutral-700 focus:outline-none disabled:opacity-50 disabled:pointer-events-none hover:bg-neutral-100">
+          <img src="https://cdn.devdojo.com/users/September2024/awifamz.jpg" alt="profile" class="object-cover w-8 h-8 border rounded-full border-neutral-200">
+          <span class="flex flex-col items-start flex-shrink-0 h-full ml-2 leading-none translate-y-px">
+            <span>eanp</span>
+            <span class="text-xs font-light text-neutral-400">@awifamz</span>
+          </span>
+          <svg class="absolute right-0 w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
+          </svg>
+        </button>
+
+      </div>
+    </div>
+    </div>
+    </div>

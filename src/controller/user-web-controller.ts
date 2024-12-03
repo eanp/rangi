@@ -157,15 +157,6 @@ export class UserWebController {
     }
   }
 
-  static async current(req: UserRequest, res: Response, next: NextFunction) {
-    try {
-      res.setHeader("Content-Type", "text/html").status(200).render("auth/register", { ...initial_data, layout: "layout-main-view" });
-      return
-    } catch (e) {
-      next(e);
-    }
-  }
-
   static async logout(req: WebRequest, res: Response, next: NextFunction) {
     if (!req.session) {
       return res.redirect("/login");
@@ -179,4 +170,13 @@ export class UserWebController {
     res.clearCookie("x-session");
     return res.redirect("/login");
   }
+
+    static async current(req: UserRequest, res: Response, next: NextFunction) {
+      try {
+        res.setHeader("Content-Type", "text/html").status(200).render("dashboard/profile-view", { ...initial_data, layout: "layout-main-view" });
+        return
+      } catch (e) {
+        next(e);
+      }
+    }
 }

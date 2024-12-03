@@ -47,3 +47,13 @@ export const webAuthMiddleware = async (req: WebRequest, res: Response, next: Ne
 
   next();
 }
+
+export const cookiesPublicRoute = async (req: Request, res: Response, next: NextFunction) => {
+  const sessionId = req.signedCookies["x-session"];
+
+  if (sessionId) {
+    return res.redirect("/");
+  }
+
+  next()
+}

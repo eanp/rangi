@@ -11,10 +11,117 @@
   <script src="/public/alpinejs@3.14.1.js" defer></script>
   <script src="/public/focus@3.x.x.js" defer></script>
   <link href="/public/styles.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
 </head>
 
-<body class="bg-gray-100 smooth">
-  <%- body %>
-</body>
+<body class="smooth pt-16 antialiased"
+x-data="{
+  sidebarOpen: false,
+  largeScreen: false,
+  showLoader: false,
+  fetching: false,
+  latestFetchingURL: '',
+  detectLargeScreenDisplay() {
+      if(window.innerWidth >= 1024){
+          this.largeScreen = true;
+      } else {
+          this.largeScreen = false;
+      }
+  },
+  loadPageAfterFetch: false,
+  cachedPages : {},
+  activeMenuItem: 'introduction',
+  fetchPage(event){
+      let url = event.target.href;
+      if(this.cachedPages[url]){
+          return;
+      }
+      this.latestFetchingURL = url;
+      let that = this;
+      fetch(url, {
+          headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+          }})
+          .then(function (response) {
+              if (response.ok) {
+                  return response.text();
+              } else {
+                  throw new Error('Failed to load page: ' + response.status);
+              }
+          })
+          .then(function (data) {
+              // create a new DOM parser
+              var parser = new DOMParser();
+              // parse the data into a new document
+              var doc = parser.parseFromString(data, 'text/html');
+              // get the content of #container from the new document
+              var newContent = doc.querySelector('#content').innerHTML;
 
+              that.cachedPages[url] = newContent;
+              if(that.loadPageAfterFetch && that.latestFetchingURL == url){
+                  that.loadPage(event);
+                  that.loadPageAfterFetch = false;
+              }
+          })
+          .catch(function (error) {
+              console.error('Failed to load page: ', error);
+          });
+
+  },
+  loadPage (event){
+
+      document.querySelector('#content').innerHTML = `<div class=\'flex items-center justify-center h-screen\'><svg class=\'animate-spin h-5 w-5 text-gray-900\' xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\'><circle class=\'opacity-25\' cx=\'12\' cy=\'12\' r=\'10\' stroke=\'currentColor\' stroke-width=\'4\'></circle><path class=\'opacity-75\' fill=\'currentColor\' d=\'M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\'></path></svg></div>`;
+
+      if(!event.target.href){
+          return false;
+      }
+
+      event.preventDefault();
+
+      let url = event.target.href;
+      this.loadPageAfterFetch = false;
+
+
+      if(!this.largeScreen){
+          this.sidebarOpen = false;
+      }
+
+      if(typeof(fathom) != 'undefined'){
+          let pageView = {
+                  url: url,
+                  referrer: window.location.href
+          };
+          fathom.trackPageview(pageView);
+      }
+
+      if(this.cachedPages[url]){
+          this.loadPageURL(url);
+          return;
+      } else {
+          this.loadPageAfterFetch = true;
+          this.fetchPage(event);
+      }
+  },
+  loadPageURL(url){
+      document.querySelector('#content').innerHTML = this.cachedPages[url];
+      window.scrollTo(0,0);
+      highlightCodeBlocks();
+      history.pushState({}, '', url);
+      setTimeout(function(){
+          window.dispatchEvent(new CustomEvent('element-loaded', {}));
+      }, 1000);
+  },
+}"
+x-init="
+  detectLargeScreenDisplay();
+  window.addEventListener('resize', function(){
+      detectLargeScreenDisplay();
+  });
+
+
+">
+  <%- body %>
+
+  <%- include ('./footer') %>
+</body>
 </html>
