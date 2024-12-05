@@ -24,7 +24,6 @@ export class UserWebController {
 
   static async getRegister(req: UserRequest, res: Response, next: NextFunction) {
     try {
-
       res.setHeader("Content-Type", "text/html").status(200).render("auth/register-view", { ...initial_data, layout: "layout-main-view" });
       return
     } catch (e) {
@@ -77,7 +76,7 @@ export class UserWebController {
         data: {
           id: uuid(),
           user_id: user.id,
-          expiredAt: new Date(Date.now() + 6.048e8 * 1), // one weeks default session ,
+          expired_at: new Date(Date.now() + 6.048e8 * 1), // one weeks default session ,
         },
       })
       res.cookie("x-session", session.id, cookieConfig)
@@ -134,7 +133,7 @@ export class UserWebController {
         data: {
           id: uuid(),
           user_id: user.id,
-          expiredAt: new Date(Date.now() + 6.048e8 * 1), // one weeks default session ,
+          expired_at: new Date(Date.now() + 6.048e8 * 1), // one weeks default session ,
         },
       })
       res.cookie("x-session", session.id, cookieConfig)

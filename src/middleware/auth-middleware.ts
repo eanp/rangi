@@ -37,13 +37,16 @@ export const webAuthMiddleware = async (req: WebRequest, res: Response, next: Ne
   const session = await UserService.getSession(sessionId)
 
   if (!session) {
+    res.clearCookie("x-session");
     return res.redirect("/login");
   }
 
   const user = await UserService.getUserBySession(session.user_id)
   req.user = user;
-  console.log("user auth middleware")
-  console.log(user)
+  res.locals.username = user.name;
+  res.locals.usermail = user.email;
+  res.locals.query = req.query;
+  res.locals.url =  req.protocol + "://" + req.get('host') + req.originalUrl;
 
   next();
 }

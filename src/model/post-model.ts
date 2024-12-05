@@ -10,8 +10,8 @@ export type PostResponse = {
     id: string;
     title: string;
     content: string;
-    createdAt: Date;
-    updatedAt: Date;
+    created_at: Date;
+    updated_at: Date;
 }
 
 export type UpdatePostRequest = {
@@ -33,7 +33,7 @@ export function toPostResponse(post: Post): PostResponse {
         id: post.id,
         title: post.title,
         content: post.content,
-        createdAt: post.createdAt,
-        updatedAt: post.updatedAt
+        created_at: post.created_at,
+        updated_at: post.updated_at
     }
 }

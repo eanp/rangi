@@ -16,8 +16,8 @@ model User {
   email     String   @unique
   password  String
   token     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
 
   session Session[]
   post Post[]
@@ -26,7 +26,7 @@ model User {
 
 model Session {
   id String @id()
-  expiredAt DateTime?
+  expired_at DateTime?
   user_id String
 
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
@@ -37,8 +37,8 @@ model Post {
   id        String   @id()
   title     String
   content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
 
   user_id String
 

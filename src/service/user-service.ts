@@ -63,7 +63,7 @@ export class UserService {
       },
       data: {
         token: uuid(),
-        updatedAt: new Date()
+        updated_at: new Date()
       }
     })
 

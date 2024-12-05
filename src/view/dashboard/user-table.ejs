@@ -1,0 +1,192 @@
+<div id="content" class="relative flex-shrink-0 w-full h-auto py-5 pr-0 lg:pl-64  ">
+
+
+  <div id="content-<%=path %>" class="w-full h-auto ">
+    <!-- user table -->
+
+    <div class="flex flex-col">
+
+      <!-- tablebar -->
+      <div class="flex flex-row my-2 justify-between px-2 py-2 border-2 border-neutral-50 rounded-md">
+        <div class="flex">
+
+          <!-- searchbar -->
+          <div class="h-8 lg:w-48 w-1/2">
+            <input id="search-<%=path %>"
+              class="form-control h-8 flex w-full px-2 py-1 text-sm bg-white border rounded-md border-neutral-300 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-300 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50"
+              type="search" name="search" placeholder="Search Item" hx-get="/<%=path %>"
+              hx-trigger="input changed delay:500ms, search" hx-select="#content-<%=path %>"
+              hx-target="#content-<%=path %>" hx-indicator=".htmx-indicator" hx-push-url="true"
+              value="<%= query.search %>" hx-swap="outerHTML">
+          </div>
+
+          <% if (query.search) { %>
+            <button type="button"
+              class="ml-2 h-8 inline-flex items-center justify-center px-2 py-1 text-sm font-medium tracking-wide text-white transition-colors duration-200 rounded-md bg-neutral-950 hover:bg-neutral-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none"
+              hx-get="/<%=path %>" hx-select="#content-<%=path %>" hx-target="#content-<%=path %>"
+              hx-indicator=".htmx-indicator" hx-push-url="true" hx-swap="outerHTML">
+              Reset
+            </button>
+            <% } %>
+        </div>
+
+        <div name="loading" class="htmx-indicator relative animate-bounce mt-2 flex flex-row justify-center">
+          <span class="relative flex h-4 w-4 mt-1 mr-1">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-neutral-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-4 w-4 bg-neutral-500"></span>
+          </span>
+          <p class="text-gray-600 text-xl font-semibold">Loading</p>
+        </div>
+
+        <!-- create -->
+        <a href="/users/create"
+          class="inline-flex items-center justify-center w-1/4 h-10 px-4 py-2 text-sm font-medium tracking-wide text-white transition-colors duration-200 rounded-md bg-neutral-950 hover:bg-neutral-900 focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 focus:shadow-outline focus:outline-none">
+          Create User
+        </a>
+      </div>
+      <!--  -->
+      <div class="overflow-x-auto">
+        <div class="inline-block min-w-full">
+          <div class="overflow-hidden border rounded-lg">
+            <table class="min-w-full divide-y divide-neutral-200">
+              <thead class="bg-neutral-50">
+                <tr class="text-neutral-500">
+                  <% tablehead.forEach(function(value) { %>
+                    <th class="px-5 text-xs font-medium text-left uppercase">
+                      <div class="flex flex-row justify-between items-center">
+                        <%= value.name.replace(/_/g, ' ' ) %>
+                          <div class="flex p-1">
+                            <% if (value.type==="sortable" ) { %>
+
+                              <% if (active_sorts.includes(`${value.name}:asc`)) { %>
+                                <button>
+                                  <svg class="w-6 h-6 text-gray-700 " aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path fill-rule="evenodd"
+                                      d="M5.575 13.729C4.501 15.033 5.43 17 7.12 17h9.762c1.69 0 2.618-1.967 1.544-3.271l-4.881-5.927a2 2 0 0 0-3.088 0l-4.88 5.927Z"
+                                      clip-rule="evenodd" />
+                                  </svg>
+                                </button>
+                                <% } else { %>
+                                  <button>
+                                    <svg class="w-6 h-6 text-gray-300 " aria-hidden="true"
+                                      xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                      viewBox="0 0 24 24">
+                                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M16.881 16H7.119a1 1 0 0 1-.772-1.636l4.881-5.927a1 1 0 0 1 1.544 0l4.88 5.927a1 1 0 0 1-.77 1.636Z" />
+                                    </svg>
+                                  </button>
+                                  <% } %>
+                                    <% if (active_sorts.includes(`${value.name}:desc`)) { %>
+                                      <svg class="w-6 h-6 text-gray-700 " aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path fill-rule="evenodd"
+                                          d="M18.425 10.271C19.499 8.967 18.57 7 16.88 7H7.12c-1.69 0-2.618 1.967-1.544 3.271l4.881 5.927a2 2 0 0 0 3.088 0l4.88-5.927Z"
+                                          clip-rule="evenodd" />
+                                      </svg>
+                                      <% } else { %>
+                                        <svg class="w-6 h-6 text-gray-300 " aria-hidden="true"
+                                          xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                          viewBox="0 0 24 24">
+                                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M7.119 8h9.762a1 1 0 0 1 .772 1.636l-4.881 5.927a1 1 0 0 1-1.544 0l-4.88-5.927A1 1 0 0 1 7.118 8Z" />
+                                        </svg>
+
+                                        <% } %>
+
+
+                                          <% } %>
+
+                          </div>
+                      </div>
+                    </th>
+                    <% }); %>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-neutral-200 bg-white">
+                <% data.forEach(item=> { %>
+                  <tr class="text-neutral-800" id="<%= item.id %>">
+                    <td class="px-5 py-4 text-sm font-medium whitespace-nowrap">
+                      <%= item.id %>
+                    </td>
+                    <td class="px-5 py-4 text-sm whitespace-nowrap">
+                      <%= item.name %>
+                    </td>
+                    <td class="px-5 py-4 text-sm whitespace-nowrap">
+                      <%= item.email %>
+                    </td>
+                    <td class="px-5 py-4 text-sm whitespace-nowrap">
+                      <%= item.created_at.toString() %>
+                    </td>
+                    <td class="px-5 py-4 text-sm whitespace-nowrap">
+                      <%= item.updated_at.toString() %>
+                    </td>
+                    <td class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap">
+                      <a href="/users/update/<%= item.id %>" type="button"
+                        class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium tracking-wide transition-colors duration-100 bg-white border-2 rounded-md text-neutral-900 hover:text-white border-neutral-900 hover:bg-neutral-900">
+                        Update
+                    </a>
+
+                      <button hx-get="/users/delete/<%= item.id %>" hx-select="#modal-delete-<%=item.id %>" hx-target="#modal-delete-<%=item.id %>"
+                        hx-indicator=".htmx-indicator" hx-swap="outerHTML" hx-push-url="true" type="button"
+                        class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium tracking-wide text-red-600 transition-colors duration-100 bg-white border-2 border-red-600 rounded-md hover:text-white hover:bg-red-600">
+                        Delete
+                  </button>
+                    </td>
+                  </tr>
+                  <div class="" id="form-edit-<%= item.id %>"></div>
+                  <div class="" id="modal-delete-<%= item.id %>"></div>
+                  <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- meta pagination   -->
+    <div class="flex items-center justify-between w-full h-16 px-3 border-t border-neutral-200 ">
+
+      <div class="flex flex-row">
+        <!-- item count -->
+        <p class="pl-2 text-sm text-gray-700">Showing <span class="font-medium">
+            <%= data.length %>
+          </span> to <span class="font-medium">
+            <%= meta.end_items %>
+          </span> of <span class="font-medium">
+            <%= meta.total %>
+          </span> results
+        </p>
+
+        <!-- item per page -->
+        <div class="inline-block relative w-16 ml-4">
+          <select
+            class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-2 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+            name="size" hx-get="/<%=path %>" hx-select="#content-<%=path %>" hx-target="#content-<%=path %>"
+            hx-indicator=".htmx-indicator" hx-swap="outerHTML" hx-push-url="true">
+            <% [10, 25, 50, 100].forEach(function(value) { %>
+              <option value="<%= value %>" <%=meta.itemsPerPage==value ? 'selected' : '' %>><%= value %>
+              </option>
+              <% }); %>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+              <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+            </svg>
+          </div>
+        </div>
+
+
+      </div>
+
+
+      <!-- pagination -->
+      <%- include('../components/dashboard-pagination.ejs') %>
+    </div>
+
+  </div>
+</div>
