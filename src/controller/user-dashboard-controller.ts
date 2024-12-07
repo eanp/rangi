@@ -20,63 +20,43 @@ export class UserDashboardController {
       const request: SearchUserRequest = {
         name: req.query.name as string,
         page: req.query.page ? Number(req.query.page) : 1,
-        size: req.query.size ? Number(req.query.size) : 5,
-        sort: req.query.sort as string,
+        size: req.query.size ? Number(req.query.size) : 5
       }
       console.log(request.sort)
 
-      const filters = [];
+      const filters:object[] = [];
       const active_sorts: string[] = [];
+      const list_sorts:object[] = [];
 
       const validSortFields = ['id', 'name', 'email', 'created_at', 'updated_at'];
-      const validOrder = ["asc", "desc"]
 
-      if (request.sort) {
-        request.sort.split(",").forEach((item) => {
-          const key = item.split(":")[0]
-          const order = item.split(":")[1]
-          if (validSortFields.includes(key) && validOrder.includes(order)) {
-            active_sorts.push(key)
-            active_sorts.push(item)
+      const query_list = Object.keys(req.query);
+      query_list.forEach(sort_item => {
+        let sort_field = (`${sort_item}`).split("-")[1]
+        let sort_value = req.query[sort_item]
+        if(validSortFields.includes(sort_field)){
+          if(sort_value==="asc"){
+            let list_sorts_item = {[sort_field] : sort_value}
+            list_sorts.push(list_sorts_item)
+            active_sorts.push(`${sort_field}-${sort_value}`)
           }
-        })
-      }
+          if(sort_value==="desc"){
+            let list_sorts_item = {[sort_field] : sort_value}
+            list_sorts.push(list_sorts_item)
+            active_sorts.push(`${sort_field}-${sort_value}`)
+          }
+        }
+
+      });
 
       console.log("active_sorts")
       console.log(active_sorts)
-
-
-      // const parseSortQuery = (sortQuery: string) => {
-      //   // Split multiple sort criteria
-      //   const sortCriteria = sortQuery.split(',').map(criterion => {
-      //     // Split each criterion into field and direction
-      //     const [field, direction = 'desc'] = criterion.split(':');
-
-      //     // Validate field and direction
-      //     if (!validSortFields.includes(field)) {
-      //       throw new Error(`Invalid sort field: ${field}`);
-      //     }
-
-      //     if (!['asc', 'desc'].includes(direction)) {
-      //       throw new Error(`Invalid sort direction: ${direction}`);
-      //     }
-
-      //     return { [field]: direction };
-      //   });
-
-      //   return sortCriteria as Prisma.UserOrderByWithRelationInput[];
-      // };
-
-      // const orderBy =  parseSortQuery(request.sort as string)
-      // if(request.sort){
-      //   console.log("orderBy")
-      //   console.log(orderBy)
-      // }
-
+      console.log("list_sorts")
+      console.log(list_sorts)
+      console.log("filters")
+      console.log(filters)
 
       // error validation
-
-
 
       if (request.name && typeof (request.name) === "string") {
         filters.push({
@@ -98,6 +78,7 @@ export class UserDashboardController {
       const skip = (request.page - 1) * request.size
 
       const users = await prismaClient.user.findMany({
+        orderBy:list_sorts,
         where: {
           AND: filters
         },

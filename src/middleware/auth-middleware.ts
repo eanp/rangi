@@ -2,7 +2,6 @@ import {Request, Response, NextFunction} from "express";
 import {prismaClient} from "../application/database";
 import {UserRequest, WebRequest} from "../type/user-request";
 import {UserService} from "../service/user-service";
-import * as cookieParser from "cookie-parser";
 
 const secret_session_key = process.env.SECRET_SESSION_KEY ?? "";
 export const authMiddleware = async (req: UserRequest, res: Response, next: NextFunction) => {
@@ -47,7 +46,6 @@ export const webAuthMiddleware = async (req: WebRequest, res: Response, next: Ne
   res.locals.usermail = user.email;
   res.locals.query = req.query;
   res.locals.url =  req.protocol + "://" + req.get('host') + req.originalUrl;
-
   next();
 }
 

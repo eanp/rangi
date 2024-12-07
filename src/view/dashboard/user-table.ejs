@@ -58,8 +58,9 @@
                           <div class="flex p-1">
                             <% if (value.type==="sortable" ) { %>
 
-                              <% if (active_sorts.includes(`${value.name}:asc`)) { %>
-                                <button>
+                              <% if (active_sorts.includes(`${value.name}-asc`)) { %>
+                                <!-- remove if any -->
+                                <button hx-get="<%= url.includes(`sort-${value.name}=asc`) ? url.split(`sort-${value.name}=asc`).join("") : url.split(`?sort-${value.name}=asc`).join("") %>" hx-target="#content-<%=path %>" hx-select="#content-<%=path %>" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator" class="sort-button" <%= active_sorts.includes(`${value.name}-desc`) ? "disabled hx-disabled" : ""%> >
                                   <svg class="w-6 h-6 text-gray-700 " aria-hidden="true"
                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                                     viewBox="0 0 24 24">
@@ -69,7 +70,8 @@
                                   </svg>
                                 </button>
                                 <% } else { %>
-                                  <button>
+                                  <!-- add new sort -->
+                                  <button hx-get="<%= url.includes("?") ? `${url}&sort-${value.name}=asc` : `${url}?sort-${value.name}=asc` %>" hx-target="#content-<%=path %>" hx-select="#content-<%=path %>" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator" class="sort-button" <%= active_sorts.includes(`${value.name}-desc`) ? "disabled hx-disabled" : ""%> >
                                     <svg class="w-6 h-6 text-gray-300 " aria-hidden="true"
                                       xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
                                       viewBox="0 0 24 24">
@@ -79,7 +81,10 @@
                                     </svg>
                                   </button>
                                   <% } %>
-                                    <% if (active_sorts.includes(`${value.name}:desc`)) { %>
+
+                                  <% if (active_sorts.includes(`${value.name}-desc`)) { %>
+                                    <!-- remove if any -->
+                                    <button hx-get="<%= url.includes(`&sort-${value.name}=desc`) ? url.split(`&sort-${value.name}=desc`).join("")  : url.split(`?sort-${value.name}=desc`).join("") %>" hx-target="#content-<%=path %>" hx-select="#content-<%=path %>" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator" class="sort-button" <%= active_sorts.includes(`${value.name}-asc`) ? "disabled hx-disabled" : ""%> >
                                       <svg class="w-6 h-6 text-gray-700 " aria-hidden="true"
                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                                         viewBox="0 0 24 24">
@@ -87,7 +92,11 @@
                                           d="M18.425 10.271C19.499 8.967 18.57 7 16.88 7H7.12c-1.69 0-2.618 1.967-1.544 3.271l4.881 5.927a2 2 0 0 0 3.088 0l4.88-5.927Z"
                                           clip-rule="evenodd" />
                                       </svg>
-                                      <% } else { %>
+                                    </button>
+                                    <% } else { %>
+                                      <!-- add new sort -->
+                                      <button hx-get="<%= url.includes("?") ? `${url}&sort-${value.name}=desc` : `${url}?sort-${value.name}=desc` %>" hx-target="#content-<%=path %>" hx-select="#content-<%=path %>" hx-swap="innerHTML" hx-push-url="true" hx-indicator=".htmx-indicator" class="sort-button"
+                                        <%= active_sorts.includes(`${value.name}-asc`) ? "disabled hx-disabled" : "" %> >
                                         <svg class="w-6 h-6 text-gray-300 " aria-hidden="true"
                                           xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
                                           viewBox="0 0 24 24">
@@ -95,9 +104,8 @@
                                             stroke-width="2"
                                             d="M7.119 8h9.762a1 1 0 0 1 .772 1.636l-4.881 5.927a1 1 0 0 1-1.544 0l-4.88-5.927A1 1 0 0 1 7.118 8Z" />
                                         </svg>
-
-                                        <% } %>
-
+                                      </button>
+                                      <% } %>
 
                                           <% } %>
 
@@ -129,13 +137,14 @@
                       <a href="/users/update/<%= item.id %>" type="button"
                         class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium tracking-wide transition-colors duration-100 bg-white border-2 rounded-md text-neutral-900 hover:text-white border-neutral-900 hover:bg-neutral-900">
                         Update
-                    </a>
+                      </a>
 
-                      <button hx-get="/users/delete/<%= item.id %>" hx-select="#modal-delete-<%=item.id %>" hx-target="#modal-delete-<%=item.id %>"
-                        hx-indicator=".htmx-indicator" hx-swap="outerHTML" hx-push-url="true" type="button"
+                      <button hx-get="/users/delete/<%= item.id %>" hx-select="#modal-delete-<%=item.id %>"
+                        hx-target="#modal-delete-<%=item.id %>" hx-indicator=".htmx-indicator" hx-swap="outerHTML"
+                        hx-push-url="true" type="button"
                         class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium tracking-wide text-red-600 transition-colors duration-100 bg-white border-2 border-red-600 rounded-md hover:text-white hover:bg-red-600">
                         Delete
-                  </button>
+                      </button>
                     </td>
                   </tr>
                   <div class="" id="form-edit-<%= item.id %>"></div>
