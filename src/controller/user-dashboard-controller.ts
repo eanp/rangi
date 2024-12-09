@@ -22,7 +22,6 @@ export class UserDashboardController {
         page: req.query.page ? Number(req.query.page) : 1,
         size: req.query.size ? Number(req.query.size) : 5
       }
-      console.log(request.sort)
 
       const filters:object[] = [];
       const active_sorts: string[] = [];
@@ -46,16 +45,7 @@ export class UserDashboardController {
             active_sorts.push(`${sort_field}-${sort_value}`)
           }
         }
-
       });
-
-      console.log("active_sorts")
-      console.log(active_sorts)
-      console.log("list_sorts")
-      console.log(list_sorts)
-      console.log("filters")
-      console.log(filters)
-
       // error validation
 
       if (request.name && typeof (request.name) === "string") {
@@ -98,8 +88,7 @@ export class UserDashboardController {
           AND: filters
         }
       })
-
-      const data = users.map(user => toUserResponse(user))
+      const data = users
 
       const current_page = request.page
       const size = request.size
@@ -107,8 +96,7 @@ export class UserDashboardController {
       const end_items = (total < skip + size) ? total : skip + size
       const pagination_meta = generatePagination(current_page, total_page)
       const meta = { current_page, size, total_page, pagination_meta, skip, end_items }
-      console.log(data)
-      console.log(meta)
+
       const tablehead = [{ name: "id", type: "sortable" }, { name: "name", type: "sortable" }, { name: "email", type: "sortable" }, { name: "created_at", type: "sortable" }, { name: "updated_at", type: "sortable" }, { name: "action", type: "action" }];
 
       res.setHeader("Content-Type", "text/html").status(200).render("dashboard/user-view", {
@@ -238,9 +226,6 @@ export class UserDashboardController {
         data: user
       })
 
-      console.log("user-")
-      console.log(request)
-      console.log(user)
       if (!user) {
         result = res.render("dashboard/user-form-update", {
           ...initial_data,
@@ -334,7 +319,6 @@ export class UserDashboardController {
   }
 
   static async current(req: UserRequest, res: Response, next: NextFunction) {
-    console.log(req.user)
     let user = {
       name: req?.user?.name || "",
       email: req?.user?.email || "",

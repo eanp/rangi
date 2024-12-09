@@ -1,0 +1,16 @@
+<%- contentFor('body') %>
+
+<!-- head -->
+<%- include ('../../components/dashboard-navbar') %>
+
+<!-- body -->
+<div class="relative flex items-start min-h-screen 2xl:px-0 lg:px-4 px-5 pt-0 pb-0 mx-auto mt-1 max-w-7xl  rounded-t-3xl">
+
+    <!-- sidebar -->
+    <%- include ('../../components/dashboard-sidebar') %>
+    <!-- content/body -->
+  <%- include ('./post-table') %>
+
+
+
+</div>

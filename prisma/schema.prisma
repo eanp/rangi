@@ -18,6 +18,7 @@ model User {
   token     String?
   created_at DateTime @default(now())
   updated_at DateTime @default(now())
+  role      String @default("user")
 
   session Session[]
   post Post[]

@@ -24,6 +24,7 @@ export type UserResponse = {
   token?: string;
   created_at: Date;
   updated_at: Date;
+  role: string;
 }
 
 export type SearchUserRequest = {
@@ -40,6 +41,7 @@ export function toUserResponse(user: User): UserResponse {
     email: user.email,
     token: user.token || "-",
     created_at: user.created_at,
-    updated_at: user.updated_at
+    updated_at: user.updated_at,
+    role: user.role,
   }
 }

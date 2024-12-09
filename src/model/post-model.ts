@@ -1,7 +1,7 @@
 import {Post} from "@prisma/client";
 
 export type CreatePostRequest = {
-  id?: string;
+  id?: string | null;
   title: string;
   content: string;
 }
@@ -12,6 +12,7 @@ export type PostResponse = {
     content: string;
     created_at: Date;
     updated_at: Date;
+
 }
 
 export type UpdatePostRequest = {
@@ -21,8 +22,7 @@ export type UpdatePostRequest = {
 }
 
 export type SearchPostRequest = {
-  title?: string;
-  content?: string;
+  search?: string;
   page: number;
   size: number;
 }

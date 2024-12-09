@@ -9,6 +9,7 @@ import { formatValidationErrors, webValidationError } from "../error/validation-
 import argon2 from "argon2";
 import { v4 as uuid } from "uuid";
 import { cookieConfig } from "../utils/cookies-utils";
+import { ResponseError } from "../error/response-error";
 
 export class UserWebController {
   static async getLogin(req: UserRequest, res: Response, next: NextFunction) {
@@ -170,12 +171,38 @@ export class UserWebController {
     return res.redirect("/login");
   }
 
-    static async current(req: UserRequest, res: Response, next: NextFunction) {
-      try {
-        res.setHeader("Content-Type", "text/html").status(200).render("dashboard/profile-view", { ...initial_data, layout: "layout-main-view" });
-        return
-      } catch (e) {
-        next(e);
-      }
+  static async current(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      res.setHeader("Content-Type", "text/html").status(200).render("dashboard/profile-view", { ...initial_data, layout: "layout-main-view" });
+      return
+    } catch (e) {
+      next(e);
     }
+  }
+
+  static async main(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      res.setHeader("Content-Type", "text/html").status(200).render("main", { ...initial_data, layout: "layout-main-view" });
+      return
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  static async admin(req: WebRequest, res: Response, next: NextFunction) {
+    const user = await prismaClient.user.update({
+      where: {
+        email: req.user?.email
+      },
+      data: {
+        role: "admin",
+        updated_at: new Date()
+      }
+    })
+
+    if(!user){
+      throw new ResponseError(400, "Change to admin Error");
+    }
+    return res.redirect("/logout");
+  }
 }

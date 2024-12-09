@@ -14,10 +14,10 @@
           <div class="h-8 lg:w-48 w-1/2">
             <input id="search-<%=path %>"
               class="form-control h-8 flex w-full px-2 py-1 text-sm bg-white border rounded-md border-neutral-300 ring-offset-background placeholder:text-neutral-500 focus:border-neutral-300 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50"
-              type="search" name="name" placeholder="Search Item" hx-get="/dashboard/<%=path %>"
+              type="search" name="search" placeholder="Search Item" hx-get="/dashboard/<%=path %>"
               hx-trigger="input changed delay:500ms, search" hx-select="#content-<%=path %>"
               hx-target="#content-<%=path %>" hx-indicator=".htmx-indicator" hx-push-url="true"
-              value="<%= query.name %>" hx-swap="outerHTML">
+              value="<%= query.search %>" hx-swap="outerHTML">
           </div>
 
           <% if (query.search) { %>
@@ -133,22 +133,25 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-neutral-200 bg-white">
-                <% data.forEach(item=> { %>
+                <% data.forEach((item,index)=> { %>
                   <tr class="text-neutral-800" id="<%= item.id %>">
                     <td class="px-5 py-4 text-sm font-medium whitespace-nowrap">
-                      <%= item.id %>
+                      <%= index+1 %>
                     </td>
                     <td class="px-5 py-4 text-sm whitespace-nowrap">
-                      <%= item.name %>
+                      <%= item.title %>
                     </td>
                     <td class="px-5 py-4 text-sm whitespace-nowrap">
-                      <%= item.email %>
+                      <%= item.content %>
                     </td>
                     <td class="px-5 py-4 text-sm whitespace-nowrap">
-                      <%= item.created_at.toString() %>
+                      <%= dayjs(item.created_at).format("MMMM D, YYYY h:mm A	") %>
                     </td>
                     <td class="px-5 py-4 text-sm whitespace-nowrap">
-                      <%= item.updated_at.toString() %>
+                      <%= dayjs(item.updated_at).format("MMMM D, YYYY h:mm A	") %>
+                    </td>
+                    <td class="px-5 py-4 text-sm whitespace-nowrap">
+                      <%= item.user.email %>
                     </td>
                     <td class="px-5 py-4 text-sm font-medium text-right whitespace-nowrap">
                       <a href="/dashboard/<%=path %>/update/<%= item.id %>" type="button"
@@ -211,7 +214,7 @@
 
 
       <!-- pagination -->
-      <%- include('../components/dashboard-pagination.ejs') %>
+      <%- include('../../components/dashboard-pagination.ejs') %>
     </div>
 
   </div>

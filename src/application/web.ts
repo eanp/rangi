@@ -1,7 +1,6 @@
 import express from "express";
-import {publicRouter} from "../routes/public-api";
+import {publicRouter} from "../routes/public-web";
 import {errorMiddleware} from "../middleware/error-middleware";
-import {apiRouter} from "../routes/api";
 import expressLayouts from "express-ejs-layouts";
 import path from 'path';
 import bodyParser from "body-parser";
@@ -24,5 +23,4 @@ web.use(morgan(":method :url :status :res[content-length] - :response-time ms"))
 // route
 web.use(publicRouter);
 web.use(webRouter)
-web.use(apiRouter);
 web.use(errorMiddleware);
